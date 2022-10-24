@@ -5,14 +5,15 @@ from flask import jsonify
 
 import logging
 
-from github import GithubREST
+from github.rest import GithubREST
+from github.pulls import GithubPulls
 
 dev_mode = True
 app = Flask(__name__)
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,
     format="%(levelname)s %(asctime)s %(message)s",
 )
 
@@ -33,8 +34,8 @@ def github_api_root_example() -> dict:
 def github_repository_pull_requests(repository: str):
     # list repos PRs: https://docs.github.com/en/rest/pulls/pulls#list-pull-requests
     # example of a repository with lots of PRs: https://github.com/django/django
-
-    return {"data": f"TODO: got {repository=}"}
+    pulls = GithubPulls(logger=logger, rest_client=GithubREST()).list_open(repository)
+    return jsonify(pulls)
 
 
 if __name__ == "__main__":
